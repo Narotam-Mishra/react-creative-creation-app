@@ -1,0 +1,96 @@
+
+.topHead h2{
+    font-size: 32px;
+    margin-top: 2rem;
+    margin-left: 2rem;
+}
+
+.wrapper{
+    width: 45%;
+    display: flex;
+    justify-content: space-between
+}
+
+.colors h3{
+    margin-top: 2rem;
+    font-size: 19px;
+    margin-left: 2rem;
+}
+
+
+.clrDiv{
+    display: flex;
+    margin-left: 2rem;
+    margin-top: 10px;
+}
+
+.clrBox{
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+}
+
+#clr1{
+    background-color: #4d044d;
+    margin-right: 10px;
+}
+
+#clr2{
+    background-color: #5e412f;
+    margin-right: 10px;
+}
+
+#clr3{
+    background-color: #f7a674;
+    margin-right: 10px;
+}
+
+#clr4{
+    background-color: #b9d7d9;
+    margin-right: 10px;
+}
+
+#clr5{
+    background-color: #a1ab5a;
+    margin-right: 10px;
+}
+
+#clr6{
+    background-color: #d1e751;
+}
+
+.titleAndsubtitle label{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.titleAndsubtitle input{
+    margin-top: 5px;
+    padding: 7px;
+}
+
+.titleAndsubtitle input::placeholder{
+    font-size: 12px;
+}
+
+.rangCon{
+    margin-left: 2rem;
+    margin-top: 5rem;
+}
+
+.range-text{
+    margin-left: 20px;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.btnContainer{
+    margin-left: 2rem;
+}
+
+.btnContainer button{
+    margin-top: 20px;
+    padding: 5px 10px 5px 10px;
+    font-size: 15px;
+    cursor: pointer;
+}

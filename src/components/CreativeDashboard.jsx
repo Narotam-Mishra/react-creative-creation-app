@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
+import axios from "axios"
 import '../styles/creativeDashboard.css';
 import Sidebar from './Sidebar';
 import CardCom from './CardCom';
@@ -7,12 +8,17 @@ import CardCom from './CardCom';
 const CreativeDashboard = () => {
   const [rangeval, setRangeval] = useState(0);
   const [dataFromChild, setDataFromChild] = useState("");
+  const [colorsData, setColorsData] = useState([]);
   const [isSidebarVisible, setSidebarVisible] = useState(false); 
   const [disabled, setDisabled] = useState(false)
   const [cards, setCards] = useState([]);
-  
+  // to filter card on basis of title and subtitle
+  const [filteredCards, setFilteredCards] = useState([]);
+  const [filterValue, setFilterValue] = useState("");
+
   const handleSidebarToggle = () => {
-    setSidebarVisible(!isSidebarVisible); // Toggle sidebar visibility state
+    // Toggle sidebar visibility state
+    setSidebarVisible(!isSidebarVisible); 
   };
 
   const handleDataFromChild = (data) => {
@@ -26,8 +32,33 @@ const CreativeDashboard = () => {
   }
   }
 
+  const handleFilterInput = (event) => {
+    // Get the input value and convert to lowercase
+    const inputValue = event.target.value.toLowerCase(); 
+    const filteredCards = cards.filter(
+      (card) =>
+      // Check if title includes input value
+        card.title.toLowerCase().includes(inputValue) || 
+        // Check if subtitle includes input value
+        card.subtitle.toLowerCase().includes(inputValue) 
+    );
+    setFilteredCards(filteredCards); // Update the state with filtered cards
+  };
+
+  const getColors = async () => {
+    try {
+      const response = await axios.get(
+        "https://random-flat-colors.vercel.app/api/random?count=5"
+      );
+      setColorsData(response.data.colors);
+    } catch (error) {
+      console.log("Error fetching colors:", error);
+    }
+  };
+
   useEffect(() => {
     setRangeval(cards.length);
+    getColors();
   }, [cards]);
 
 
@@ -35,7 +66,12 @@ const CreativeDashboard = () => {
   return (
     <div>
       {/* Conditionally render the Sidebar component based on the state */}
-      {isSidebarVisible ? <Sidebar onCloseSidebar={handleSidebarToggle} sendDataToParent={handleDataFromChild} /> : null}
+      {isSidebarVisible ? (
+        <Sidebar
+          onCloseSidebar={handleSidebarToggle}
+          sendDataToParent={handleDataFromChild}
+        />
+      ) : null}
 
       <div className="topHead">
         <h2>Filter By</h2>
@@ -44,12 +80,13 @@ const CreativeDashboard = () => {
         <div className="colors">
           <h3>color:</h3>
           <div className="clrDiv">
-            <div id="clr1" className="clrBox"></div>
-            <div id="clr2" className="clrBox"></div>
-            <div id="clr3" className="clrBox"></div>
-            <div id="clr4" className="clrBox"></div>
-            <div id="clr5" className="clrBox"></div>
-            <div id="clr6" className="clrBox"></div>
+            {colorsData.map((color, index) => (
+              <div
+                key={index}
+                className="clrBox"
+                style={{ backgroundColor: color }}
+              ></div>
+            ))}
           </div>
         </div>
         <div className="titleAndsubtitle">
@@ -57,8 +94,12 @@ const CreativeDashboard = () => {
           <br />
           <input
             type="text"
+            value={filterValue}
             placeholder="search across title and subtitle"
-            disabled={true}
+            onChange={(event) => {
+              setFilterValue(event.target.value);
+              handleFilterInput(event);
+            }}
           />
         </div>
       </div>
@@ -71,15 +112,24 @@ const CreativeDashboard = () => {
           max="5"
           onChange={(event) => setRangeval(event.target.value)}
         />
-        <span className='range-text'>{rangeval} / 5 Creatives</span>
+        <span className="range-text">{rangeval} / 5 Creatives</span>
       </div>
       <div className="btnContainer">
-        <button onClick={() => handleSidebarToggle()} disabled={isSidebarVisible}>+Add Creative</button>
+        <button
+          onClick={() => handleSidebarToggle()}
+          disabled={isSidebarVisible}
+        >
+          +Add Creative
+        </button>
       </div>
       <div>
-        {cards.map((card, index) => (
-          <CardCom key={index} dataFromChild={card} />
-        ))}
+        {filterValue !== "" // Check if there is a filter value
+          ? filteredCards.map((card, index) => (
+              <CardCom key={index} dataFromChild={card} />
+            ))
+          : cards.map((card, index) => (
+              <CardCom key={index} dataFromChild={card} />
+            ))}
       </div>
     </div>
   );

@@ -1,20 +1,41 @@
-import { useState } from 'react';
+/* eslint-disable no-unused-vars */
+import { useState, useEffect } from 'react';
 import '../styles/creativeDashboard.css';
 import Sidebar from './Sidebar';
+import CardCom from './CardCom';
 
 const CreativeDashboard = () => {
   const [rangeval, setRangeval] = useState(0);
-  // State to track sidebar display
-  const [isSidebarDisplayed, setSidebarDisplayed] = useState(false); 
-
-  const handleAddCreative = () => {
-    setSidebarDisplayed(true); // Display the sidebar when Add Creative button is clicked
-  };
+  const [dataFromChild, setDataFromChild] = useState("");
+  const [isSidebarVisible, setSidebarVisible] = useState(false); 
+  const [disabled, setDisabled] = useState(false)
+  const [cards, setCards] = useState([]);
   
+  const handleSidebarToggle = () => {
+    setSidebarVisible(!isSidebarVisible); // Toggle sidebar visibility state
+  };
+
+  const handleDataFromChild = (data) => {
+    setDataFromChild(data);
+    // setCards([...cards, data]);
+    if (cards.length < 5) {
+    setDataFromChild(data);
+    setCards([...cards, data]);
+  } else {
+    alert("You can only add up to 5 cards.");
+  }
+  }
+
+  useEffect(() => {
+    setRangeval(cards.length);
+  }, [cards]);
+
+
+
   return (
     <div>
       {/* Conditionally render the Sidebar component based on the state */}
-      {isSidebarDisplayed ? <Sidebar /> : null}
+      {isSidebarVisible ? <Sidebar onCloseSidebar={handleSidebarToggle} sendDataToParent={handleDataFromChild} /> : null}
 
       <div className="topHead">
         <h2>Filter By</h2>
@@ -45,15 +66,20 @@ const CreativeDashboard = () => {
         <input
           type="range"
           className="custom-range"
-          defaultValue={rangeval}
+          value={rangeval}
           min="0"
           max="5"
           onChange={(event) => setRangeval(event.target.value)}
         />
-        <span className='range-text'>0 / 5 Creatives</span>
+        <span className='range-text'>{rangeval} / 5 Creatives</span>
       </div>
       <div className="btnContainer">
-        <button onClick={handleAddCreative} disabled={isSidebarDisplayed}>+Add Creative</button>
+        <button onClick={() => handleSidebarToggle()} disabled={isSidebarVisible}>+Add Creative</button>
+      </div>
+      <div>
+        {cards.map((card, index) => (
+          <CardCom key={index} dataFromChild={card} />
+        ))}
       </div>
     </div>
   );

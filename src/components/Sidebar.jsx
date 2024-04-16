@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
 import '../styles/sidebar.css'
 import axios from "axios"
 
-const Sidebar = () => {
+const Sidebar = ({ onCloseSidebar, sendDataToParent }) => {
+
     const [title, setTitle] = useState("");
     const [subtitle, setSubtitle] = useState("");
     const [colors, setColors] = useState([]);
@@ -22,18 +25,25 @@ const Sidebar = () => {
         const response = await axios.get(
           "https://random-flat-colors.vercel.app/api/random?count=5"
         );
-        // console.log(response.data.colors);
         setColors(response.data.colors);
       } catch (error) {
         console.log("Error fetching colors:", error);
       }
     };
 
+    const sendData = (formData) => {
+        sendDataToParent(formData);
+    }
+
     const handleFormSubmit = (e) => {
       e.preventDefault();
       if (title && subtitle && selectedColor) {
-        setFormData({ title, subtitle, color: selectedColor });
-      }
+    const formData = { title, subtitle, color: selectedColor };
+    sendData(formData);
+    setSidebarVisible(!isSidebarVisible); 
+    onCloseSidebar();
+  }
+      
     };
 
     const handleInputChange = (e) => {
@@ -53,8 +63,13 @@ const Sidebar = () => {
     }
 
     const handleSidebarToggle = () => {
-        setSidebarVisible(!isSidebarVisible); // Toggle sidebar visibility state
+        // Toggle sidebar visibility state
+        
+        setSidebarVisible(!isSidebarVisible); 
+        onCloseSidebar();
     };
+
+    
 
   return (
     isSidebarVisible && (
@@ -95,6 +110,7 @@ const Sidebar = () => {
             <h3 className="bg-colors">background color</h3>
             <select
               id="bg-color"
+              className='select-color'
               value={selectedColor}
               onChange={handleColorChange}
               required
@@ -106,23 +122,13 @@ const Sidebar = () => {
                 </option>
               ))}
             </select>
-            <div className="btnContainer">
+            <div className="btnCon">
               <button type="submit" disabled={!isFormValid}>
                 Done
               </button>
             </div>
           </form>
         </div>
-        {/* Conditionally render container div if form data exists */}
-        {formData && (
-          <div
-            className="container"
-            style={{ backgroundColor: formData.color }}
-          >
-            <h2>{formData.title}</h2>
-            <h3>{formData.subtitle}</h3>
-          </div>
-        )}
       </div>
     )
   );

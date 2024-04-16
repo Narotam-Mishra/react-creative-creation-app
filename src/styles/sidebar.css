@@ -56,15 +56,19 @@
     margin-top: 1.5rem;
 }
 
-.btnContainer button{
+.btnCon{
+    display: flex;
+    justify-content: center;
+}
+
+.btnCon button{
     margin-top: 2rem;
     padding: 5px 20px 5px 20px;
     font-size: 15px;
     cursor: pointer;
 }
 
-.container{
-    height: 40px;
-    width: 50px;
-    border: 1px solid;
+.select-color{
+    margin-top: 0.7rem;
 }
+
